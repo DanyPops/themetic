@@ -72,7 +72,14 @@ Exactly one seed must be `"brand"` — the rest are `"secondary"`.
 
 ## Install
 
-Local, not published:
+Published on npm as `@danypops/themetic`:
+
+```bash
+pi install npm:@danypops/themetic
+```
+
+Or from this local checkout (e.g. while developing against an unpublished
+change):
 
 ```bash
 pi install ~/Projects/themetic
