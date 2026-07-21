@@ -1,0 +1,8 @@
+{
+	"name": "themetic-cozy-autumn-forest",
+	"seeds": [
+		{ "hue": 28, "name": "maple/oak leaf amber", "role": "brand" },
+		{ "hue": 15, "name": "deep russet bark", "role": "secondary" },
+		{ "hue": 95, "name": "moss/fir green", "role": "secondary" }
+	]
+}

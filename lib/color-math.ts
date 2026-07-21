@@ -58,14 +58,21 @@ export function relativeLuminance(hex: string): number {
  * Ecological Valence Theory "mud zone" check (Palmer & Schloss 2010; Pantone 448C).
  * A desaturated, hue-ambiguous warm-brown in roughly the 20-60 degree hue range reads as
  * dirt/rot/decay and is reliably disliked, independent of the rest of a palette's harmony.
- * Reference point: Pantone 448C is #4A412A, which is h≈51 s≈28% l≈23% in HSL.
+ * Reference point: Pantone 448C is #4A412A, which is h≈43 s≈28% l≈23% in HSL.
+ *
+ * The saturation band has a *lower* bound as well as an upper one. Caught during themetic's
+ * own walking-skeleton testing: a neutral gray ramp tinted only ~6% toward a warm brand hue
+ * (deliberately, for cohesion — see generateDarkTheme) landed in a naive "s < 0.32" check
+ * identically to a genuinely dirty 28%-saturated brown. A 6%-saturated color reads as plain
+ * gray to the eye, not as mud; below ~12% saturation there isn't enough chroma left for hue
+ * to register as an unpleasant color at all, only as a neutral with a faint cast.
  */
 export function isMudZone(hex: string): boolean {
 	const { h, s, l } = hexToHsl(hex);
 	const inHueRange = h >= 20 && h <= 60;
-	const lowSaturation = s < 0.32;
+	const perceptiblyMuddySaturation = s >= 0.12 && s < 0.32;
 	const lowMidLightness = l >= 0.12 && l <= 0.42;
-	return inHueRange && lowSaturation && lowMidLightness;
+	return inHueRange && perceptiblyMuddySaturation && lowMidLightness;
 }
 
 /** Shortest angular distance between two hues (0-360), result in [0, 180]. */
