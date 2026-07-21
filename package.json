@@ -2,7 +2,8 @@
 	"name": "@danypops/themetic",
 	"version": "0.1.0",
 	"pi": {
-		"extensions": ["./index.ts"]
+		"extensions": ["./index.ts"],
+		"skills": ["./skills"]
 	},
 	"description": "Agentic, science-grounded pi theme generator: /themetic <prompt> turns a natural-language mood into a legible, non-'scientifically ugly' pi theme via a deterministic palette/contrast/vibration gate.",
 	"type": "module",

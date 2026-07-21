@@ -2,10 +2,11 @@
  * Walking-skeleton CLI: takes a ThemeSpec JSON file, runs the deterministic
  * pipeline, gates it, and writes ~/.pi/agent/themes/<name>.json on success.
  *
- * This stands in for the real `/themetic <prompt>` slash command's
- * downstream half until that's wired up — the LLM-seed step this CLI
- * skips is exactly the one step the architecture reserves for the model
- * (see the research doc); everything this script does is deterministic.
+ * This stands in for the agentic half (skills/themetic/SKILL.md, invoked via
+ * `/skill:themetic <prompt>`) for direct testing of the deterministic
+ * pipeline without a model in the loop — the seed hues this CLI takes as
+ * input are exactly what the skill asks the model to produce; everything
+ * downstream of that is deterministic either way.
  *
  * Usage: node --experimental-strip-types scripts/generate-cli.ts <spec.json>
  */

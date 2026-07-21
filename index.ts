@@ -1,24 +1,26 @@
 /**
  * Themetic: an agentic, science-grounded pi theme generator.
  *
- * `/themetic <prompt>` primes the current turn with instructions for the
- * model to pick 1-3 seed hues grounded in real associations for the prompt,
- * then call the `themetic_generate` tool. Everything downstream of that tool
- * call — palette generation, token-role assignment, and the pass/fail
- * quality gate — is deterministic code in lib/, not model judgment. See
- * the research doc (agentic-pi-theme-maker-color-science-research-
- * architecture) for why that split exists and what each gate check catches.
+ * This extension registers exactly one thing: the `themetic_generate` tool,
+ * the deterministic backend (palette generation, token-role assignment, and
+ * a pass/fail quality gate — none of it model judgment). The agentic half —
+ * researching a prompt's subject, picking 1-3 seed hues, calling this tool,
+ * and retrying on gate failure — lives in skills/themetic/SKILL.md, invoked
+ * via `/skill:themetic <prompt>` (or automatically, when the model judges a
+ * request matches the skill's description). Skills load their full
+ * instructions directly into the current turn, so this runs natively in the
+ * session — no editor-paste-and-manually-send step, which is what an
+ * earlier version of this file did before this package had a skill.
  *
- * The LLM is the *only* thing that decides seed hues; if the tool reports a
- * gate failure, the model is expected to revise the seeds and call the tool
- * again rather than the extension silently "fixing" or shipping a failing
- * theme.
+ * See the research doc (agentic-pi-theme-maker-color-science-research-
+ * architecture) for why the model/deterministic split exists and what each
+ * gate check catches.
  */
 import type { AgentToolResult, ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { Type } from "typebox";
 import { generateDarkTheme, type SeedHue } from "./lib/generate.ts";
 import { runGate, type GateResult } from "./lib/gate.ts";
-import { serializeTheme, themesDir, writeTheme } from "./lib/write-theme.ts";
+import { serializeTheme, writeTheme } from "./lib/write-theme.ts";
 
 interface ThemeToolDetails {
 	gate?: GateResult;
@@ -74,29 +76,6 @@ export default function themetic(pi: ExtensionAPI) {
 				],
 				details: { path, colors: theme.colors, vars: theme.vars },
 			};
-		},
-	});
-
-	pi.registerCommand("themetic", {
-		description: "Generate a pi theme from a natural-language prompt (agentic; grounded, gated)",
-		handler: async (args, ctx) => {
-			const prompt = args?.trim();
-			if (!prompt) {
-				ctx.ui.notify('Usage: /themetic <prompt>, e.g. /themetic "armenian mountains, deep browns/reds/oranges, blue and teal highlights"', "warning");
-				return;
-			}
-			const instruction = [
-				`Generate a pi theme for this prompt: "${prompt}"`,
-				"",
-				"Pick 1-3 seed hues (0-360 degrees) grounded in genuine associations with the subject " +
-					"(real materials, culture, landmarks, flora — not generic guesses). Mark exactly one as " +
-					'"brand" (used sparingly for the accent/border-accent/peak-state color) and the rest "secondary".',
-				"",
-				`Then call the themetic_generate tool with a kebab-case name and those seeds. Themes are written to ${themesDir()}. ` +
-					"If it reports a quality-gate failure, adjust the seed hues based on the stated reasons and call it again — do not give up after one failure, and do not describe colors without actually calling the tool.",
-			].join("\n");
-			ctx.ui.pasteToEditor(instruction);
-			ctx.ui.notify("Prompt drafted in the editor — review and send to generate the theme.", "info");
 		},
 	});
 }
