@@ -7,7 +7,7 @@
  * with no model calls, per the architecture in the themetic research doc
  * (agentic-pi-theme-maker-color-science-research-architecture-uste).
  */
-import { desaturate, hexToHsl, hsl, isMudZone, relativeLuminance } from "./color-math.ts";
+import { CONTRAST_MARGIN, ensureContrast, hexToHsl, hsl, isMudZone, relativeLuminance } from "./color-math.ts";
 
 export interface SeedHue {
 	/** Hue angle in degrees, 0-360. */
@@ -74,8 +74,12 @@ export function generateDarkTheme(spec: ThemeSpec): GeneratedTheme {
 	const gray80 = hsl(brand.hue, neutralTint, 0.16);
 	const gray70 = hsl(brand.hue, neutralTint, 0.22);
 	const gray60 = hsl(brand.hue, neutralTint, 0.3);
-	const gray50 = hsl(brand.hue, neutralTint, 0.44);
-	const gray45 = hsl(brand.hue, neutralTint, 0.55);
+	// dim/muted are self-corrected against toolPendingBg below (see the gate's matching
+	// checks) rather than trusted at a fixed lightness — a constant tuned for one hue/
+	// saturation combination silently fails for another (found via themetic's own gate
+	// after the industrial.json dim-token incident; see CONTRAST_MARGIN's doc comment).
+	const gray50 = ensureContrast(hsl(brand.hue, neutralTint, 0.44), gray90, 3 + CONTRAST_MARGIN);
+	const gray45 = ensureContrast(hsl(brand.hue, neutralTint, 0.55), gray90, 4.5 + CONTRAST_MARGIN);
 	const gray30 = hsl(brand.hue, neutralTint, 0.78);
 	const text = hsl(brand.hue, 0.08, 0.88);
 
@@ -115,6 +119,11 @@ export function generateDarkTheme(spec: ThemeSpec): GeneratedTheme {
 	const selectedBg = gray80;
 	const userMessageBg = gray90;
 
+	// customMessageLabel is rendered on customMessageBg; self-correct it against that
+	// specific background rather than trusting mutedFromSeed's fixed lightness, same
+	// reasoning as gray50/gray45 above.
+	const customMessageLabel = ensureContrast(mutedSecondaryB, customMessageBg, 3 + CONTRAST_MARGIN);
+
 	const vars = {
 		brandAccent,
 		mutedBrand,
@@ -146,7 +155,7 @@ export function generateDarkTheme(spec: ThemeSpec): GeneratedTheme {
 		error: "error",
 		warning: "warning",
 		muted: "gray45",
-		dim: "gray60",
+		dim: "gray50",
 		text: "text",
 		thinkingText: "gray45",
 
@@ -155,7 +164,7 @@ export function generateDarkTheme(spec: ThemeSpec): GeneratedTheme {
 		userMessageText: "text",
 		customMessageBg: "customMessageBg",
 		customMessageText: "text",
-		customMessageLabel: "mutedSecondaryB",
+		customMessageLabel: "customMessageLabel",
 		toolPendingBg: "toolPendingBg",
 		toolSuccessBg: "toolSuccessBg",
 		toolErrorBg: "toolErrorBg",
@@ -205,6 +214,7 @@ export function generateDarkTheme(spec: ThemeSpec): GeneratedTheme {
 		selectedBg,
 		userMessageBg,
 		toolPendingBg,
+		customMessageLabel,
 	};
 
 	return {

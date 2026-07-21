@@ -7,7 +7,7 @@
  * something a screenshot eventually catches.
  */
 import { createRequire } from "node:module";
-import { contrastRatio, isMudZone, isVibrating } from "./color-math.ts";
+import { CONTRAST_MARGIN, contrastRatio, isMudZone, isVibrating } from "./color-math.ts";
 import type { GeneratedTheme } from "./generate.ts";
 
 // pi-coding-agent's package.json `exports` map doesn't expose this subpath for bare-specifier
@@ -44,24 +44,27 @@ function resolve(theme: GeneratedTheme, key: string): string {
  * tool-execution.js and component sources referenced in project history) —
  * this is the concrete list the vibration/contrast checks run against,
  * rather than checking every possible pair (which would be both slow and
- * meaningless for colors that never appear adjacent). */
+ * meaningless for colors that never appear adjacent). Thresholds are the WCAG
+ * floor (3 or 4.5) plus CONTRAST_MARGIN. */
 const CO_VISIBLE_PAIRS: [fg: string, bg: string, minContrast: number][] = [
-	["toolTitle", "toolPendingBg", 3],
-	["toolTitle", "toolSuccessBg", 3],
-	["toolTitle", "toolErrorBg", 3],
-	["toolOutput", "toolPendingBg", 4.5],
-	["toolOutput", "toolSuccessBg", 4.5],
-	["toolOutput", "toolErrorBg", 4.5],
-	["success", "toolSuccessBg", 3],
-	["error", "toolErrorBg", 3],
-	["toolDiffAdded", "toolSuccessBg", 3],
-	["toolDiffAdded", "toolPendingBg", 3],
-	["toolDiffRemoved", "toolErrorBg", 3],
-	["toolDiffRemoved", "toolPendingBg", 3],
-	["userMessageText", "userMessageBg", 4.5],
-	["customMessageText", "customMessageBg", 4.5],
-	["customMessageLabel", "customMessageBg", 3],
-	["text", "userMessageBg", 4.5],
+	["toolTitle", "toolPendingBg", 3 + CONTRAST_MARGIN],
+	["toolTitle", "toolSuccessBg", 3 + CONTRAST_MARGIN],
+	["toolTitle", "toolErrorBg", 3 + CONTRAST_MARGIN],
+	["toolOutput", "toolPendingBg", 4.5 + CONTRAST_MARGIN],
+	["toolOutput", "toolSuccessBg", 4.5 + CONTRAST_MARGIN],
+	["toolOutput", "toolErrorBg", 4.5 + CONTRAST_MARGIN],
+	["success", "toolSuccessBg", 3 + CONTRAST_MARGIN],
+	["error", "toolErrorBg", 3 + CONTRAST_MARGIN],
+	["toolDiffAdded", "toolSuccessBg", 3 + CONTRAST_MARGIN],
+	["toolDiffAdded", "toolPendingBg", 3 + CONTRAST_MARGIN],
+	["toolDiffRemoved", "toolErrorBg", 3 + CONTRAST_MARGIN],
+	["toolDiffRemoved", "toolPendingBg", 3 + CONTRAST_MARGIN],
+	["userMessageText", "userMessageBg", 4.5 + CONTRAST_MARGIN],
+	["customMessageText", "customMessageBg", 4.5 + CONTRAST_MARGIN],
+	["customMessageLabel", "customMessageBg", 3 + CONTRAST_MARGIN],
+	["text", "userMessageBg", 4.5 + CONTRAST_MARGIN],
+	["dim", "toolPendingBg", 3 + CONTRAST_MARGIN],
+	["muted", "toolPendingBg", 4.5 + CONTRAST_MARGIN],
 ];
 
 /** All foreground/text-role tokens, checked individually for the EVT mud zone. */

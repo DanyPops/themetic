@@ -6,7 +6,9 @@ import type { GeneratedTheme } from "../lib/generate.ts";
 /** Minimal but schema-complete theme fixture, so tests only need to override the
  * one or two tokens relevant to what they're checking. */
 function baseTheme(overrides: Partial<GeneratedTheme["colors"]> = {}): GeneratedTheme {
-	const neutral = "#4d4d4d";
+	const neutral = "#4d4d4d"; // still fine for border-only roles (border/thinkingOff), never used for readable text below
+	const dim = "#757575"; // matches industrial.json's post-incident fix, not the original 1.95:1 value
+	const muted = "#8f8f8f"; // matches industrial.json's post-incident fix
 	const text = "#e0e0e0";
 	const colors: GeneratedTheme["colors"] = {
 		accent: "#ee0000",
@@ -16,10 +18,10 @@ function baseTheme(overrides: Partial<GeneratedTheme["colors"]> = {}): Generated
 		success: "#63993d",
 		error: "#f0561d",
 		warning: "#dca614",
-		muted: "#8c8c8c",
-		dim: neutral,
+		muted,
+		dim,
 		text,
-		thinkingText: "#8c8c8c",
+		thinkingText: muted,
 		selectedBg: "#292929",
 		userMessageBg: "#1f1f1f",
 		userMessageText: text,
