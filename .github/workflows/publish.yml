@@ -1,0 +1,36 @@
+name: Publish Package
+
+# Requires a Trusted Publisher configured for this package at
+# https://npmjs.com -> Packages -> @danypops/themetic -> Settings -> Trusted Publisher:
+#   Organization or user: DanyPops
+#   Repository: themetic
+#   Workflow filename: publish.yml   (must match this file's name exactly)
+#   Allowed actions: npm publish
+#
+# Once that's configured, pushing a `v*` tag publishes via OIDC - no npm
+# token, no interactive OTP. See docs.npmjs.com/trusted-publishers.
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          registry-url: "https://registry.npmjs.org"
+
+      - run: npm ci
+      - run: npm run check
+      - run: npm test
+      - run: npm publish --access public
