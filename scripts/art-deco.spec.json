@@ -1,0 +1,8 @@
+{
+	"name": "art-deco",
+	"seeds": [
+		{ "hue": 45, "name": "gold/brass trim", "role": "brand" },
+		{ "hue": 150, "name": "emerald jewel tone", "role": "secondary" },
+		{ "hue": 200, "name": "sapphire/peacock blue jewel tone", "role": "secondary" }
+	]
+}
