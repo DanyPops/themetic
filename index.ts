@@ -1,20 +1,19 @@
 /**
- * Themetic: an agentic, science-grounded pi theme generator.
+ * Themetic: generates pi color themes from a natural-language prompt.
  *
  * This extension registers exactly one thing: the `themetic_generate` tool,
  * the deterministic backend (palette generation, token-role assignment, and
- * a pass/fail quality gate — none of it model judgment). The agentic half —
+ * a pass/fail quality gate; none of it model judgment). The agentic half,
  * researching a prompt's subject, picking 1-3 seed hues, calling this tool,
- * and retrying on gate failure — lives in skills/themetic/SKILL.md, invoked
+ * and retrying on gate failure, lives in skills/themetic/SKILL.md, invoked
  * via `/skill:themetic <prompt>` (or automatically, when the model judges a
  * request matches the skill's description). Skills load their full
- * instructions directly into the current turn, so this runs natively in the
- * session — no editor-paste-and-manually-send step, which is what an
- * earlier version of this file did before this package had a skill.
+ * instructions directly into the current turn, so this runs natively in
+ * the session, with no editor-paste-and-manually-send step, which is what
+ * an earlier version of this file did before this package had a skill.
  *
- * See the research doc (agentic-pi-theme-maker-color-science-research-
- * architecture) for why the model/deterministic split exists and what each
- * gate check catches.
+ * See RESEARCH.md for why the model/deterministic split exists and what
+ * each gate check catches.
  */
 import type { AgentToolResult, ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { Type } from "typebox";

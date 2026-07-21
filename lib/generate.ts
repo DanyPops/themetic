@@ -2,10 +2,9 @@
  * Deterministic seed -> pi theme pipeline.
  *
  * This module owns everything downstream of "what hue(s) does this prompt
- * evoke" — the LLM-controlled step stops at producing SeedHue[]. Palette
+ * evoke." The LLM-controlled step stops at producing SeedHue[]. Palette
  * generation, token role assignment, and gating below are pure functions
- * with no model calls, per the architecture in the themetic research doc
- * (agentic-pi-theme-maker-color-science-research-architecture-uste).
+ * with no model calls; see RESEARCH.md for why that split exists.
  */
 import { CONTRAST_MARGIN, ensureContrast, hexToHsl, hsl, isMudZone, relativeLuminance } from "./color-math.ts";
 

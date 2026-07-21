@@ -5,7 +5,7 @@
 		"extensions": ["./index.ts"],
 		"skills": ["./skills"]
 	},
-	"description": "Agentic, science-grounded pi theme generator: /skill:themetic <prompt> turns a natural-language mood into a legible, non-'scientifically ugly' pi theme via a deterministic palette/contrast/vibration gate.",
+	"description": "Generates pi color themes from a natural-language prompt via /skill:themetic. Seed hues come from the model; palette generation and a WCAG contrast/color-harmony gate are deterministic, so a theme is only written if it passes.",
 	"type": "module",
 	"main": "index.ts",
 	"license": "MIT",
