@@ -5,12 +5,23 @@
 		"extensions": ["./index.ts"],
 		"skills": ["./skills"]
 	},
-	"description": "Agentic, science-grounded pi theme generator: /themetic <prompt> turns a natural-language mood into a legible, non-'scientifically ugly' pi theme via a deterministic palette/contrast/vibration gate.",
+	"description": "Agentic, science-grounded pi theme generator: /skill:themetic <prompt> turns a natural-language mood into a legible, non-'scientifically ugly' pi theme via a deterministic palette/contrast/vibration gate.",
 	"type": "module",
 	"main": "index.ts",
 	"license": "MIT",
 	"author": "danypops <danypops@protonmail.com>",
-	"keywords": ["pi-package", "pi-extension", "theme", "color-theory"],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/DanyPops/themetic.git"
+	},
+	"homepage": "https://github.com/DanyPops/themetic#readme",
+	"bugs": {
+		"url": "https://github.com/DanyPops/themetic/issues"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"keywords": ["pi-package", "pi-extension", "pi-skill", "theme", "color-theory"],
 	"peerDependencies": {
 		"@earendil-works/pi-ai": ">=0.80.0",
 		"@earendil-works/pi-coding-agent": ">=0.80.0",
