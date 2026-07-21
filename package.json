@@ -1,0 +1,29 @@
+{
+	"name": "@danypops/themetic",
+	"version": "0.1.0",
+	"pi": {
+		"extensions": ["./index.ts"]
+	},
+	"description": "Agentic, science-grounded pi theme generator: /themetic <prompt> turns a natural-language mood into a legible, non-'scientifically ugly' pi theme via a deterministic palette/contrast/vibration gate.",
+	"type": "module",
+	"main": "index.ts",
+	"license": "MIT",
+	"author": "danypops <danypops@protonmail.com>",
+	"keywords": ["pi-package", "pi-extension", "theme", "color-theory"],
+	"peerDependencies": {
+		"@earendil-works/pi-ai": ">=0.80.0",
+		"@earendil-works/pi-coding-agent": ">=0.80.0",
+		"@earendil-works/pi-tui": ">=0.80.0"
+	},
+	"dependencies": {
+		"culori": "^4.0.1"
+	},
+	"devDependencies": {
+		"typescript": "^5.7.0",
+		"@types/culori": "^4.0.1"
+	},
+	"scripts": {
+		"check": "tsc --noEmit",
+		"test": "node --experimental-strip-types --test test/*.test.ts"
+	}
+}
