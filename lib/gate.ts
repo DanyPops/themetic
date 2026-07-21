@@ -6,19 +6,9 @@
  * background mismatches) structurally impossible to ship, rather than
  * something a screenshot eventually catches.
  */
-import { createRequire } from "node:module";
 import { CONTRAST_MARGIN, contrastRatio, isMudZone, isVibrating } from "./color-math.ts";
 import type { GeneratedTheme } from "./generate.ts";
-
-// pi-coding-agent's package.json `exports` map doesn't expose this subpath for bare-specifier
-// resolution, so reach into node_modules by relative path instead (same approach used
-// throughout this project's manual theme-schema validation via `node -e`).
-const require = createRequire(import.meta.url);
-const themeSchema = require(
-	"../node_modules/@earendil-works/pi-coding-agent/dist/modes/interactive/theme/theme-schema.json",
-) as {
-	properties: { colors: { required: string[] } };
-};
+import { REQUIRED_THEME_COLOR_KEYS } from "./theme-schema.ts";
 
 export interface GateFailure {
 	check: "schema" | "contrast" | "mud-zone" | "vibration";
@@ -96,7 +86,7 @@ export function runGate(theme: GeneratedTheme): GateResult {
 	const failures: GateFailure[] = [];
 
 	// 1. Schema completeness: every required token present, no unexpected extras.
-	const required = themeSchema.properties.colors.required;
+	const required: readonly string[] = REQUIRED_THEME_COLOR_KEYS;
 	const present = new Set(Object.keys(theme.colors));
 	for (const key of required) {
 		if (!present.has(key)) failures.push({ check: "schema", detail: `missing required token "${key}"` });
