@@ -1,5 +1,5 @@
 {
-	"name": "themetic-armenian-mountains",
+	"name": "armenian-mountains",
 	"seeds": [
 		{ "hue": 8, "name": "pomegranate/flag-red", "role": "brand" },
 		{ "hue": 32, "name": "apricot/flag-orange", "role": "secondary" },

@@ -1,5 +1,5 @@
 {
-	"name": "themetic-make-it-pop",
+	"name": "make-it-pop",
 	"seeds": [
 		{ "hue": 320, "name": "vivid magenta (vague 'pop' request, adversarial test case)", "role": "brand" },
 		{ "hue": 180, "name": "cyan contrast", "role": "secondary" }

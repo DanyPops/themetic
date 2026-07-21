@@ -49,7 +49,10 @@ words.
 
 ## 3. Call `themetic_generate`
 
-Call the tool with a kebab-case `name` and your seed hues. It runs the
+Call the tool with a kebab-case `name` and your seed hues. Name it after the
+prompt's subject only (e.g. `armenian-mountains`, `cozy-autumn-forest`) —
+do not prefix it with `themetic` or this skill's own name; that's not a
+namespace the theme file needs. It runs the
 deterministic pipeline and a quality gate (WCAG contrast with a safety
 margin, an Ecological Valence Theory "mud zone" check, a complementary-color
 vibration check) before writing anything.
