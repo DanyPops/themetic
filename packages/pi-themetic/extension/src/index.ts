@@ -1,25 +1,23 @@
 /**
- * Themetic: generates pi color themes from a natural-language prompt.
+ * pi-themetic: generates pi color themes from a natural-language prompt.
  *
  * This extension registers exactly one thing: the `themetic_generate` tool,
- * the deterministic backend (palette generation, token-role assignment, and
- * a pass/fail quality gate; none of it model judgment). The agentic half,
- * researching a prompt's subject, picking 1-3 seed hues, calling this tool,
- * and retrying on gate failure, lives in skills/themetic/SKILL.md, invoked
- * via `/skill:themetic <prompt>` (or automatically, when the model judges a
- * request matches the skill's description). Skills load their full
- * instructions directly into the current turn, so this runs natively in
- * the session, with no editor-paste-and-manually-send step, which is what
- * an earlier version of this file did before this package had a skill.
+ * a thin wrapper around @danypops/themetic's deterministic backend (palette
+ * generation, token-role assignment, and a pass/fail quality gate; none of
+ * it model judgment). The agentic half, researching a prompt's subject,
+ * picking 1-3 seed hues, calling this tool, and retrying on gate failure,
+ * lives in skills/themetic/SKILL.md, invoked via `/skill:themetic` (or
+ * automatically, when the model judges a request matches the skill's
+ * description). Skills load their full instructions directly into the
+ * current turn, so this runs natively in the session, with no
+ * editor-paste-and-manually-send step.
  *
- * See RESEARCH.md for why the model/deterministic split exists and what
- * each gate check catches.
+ * See @danypops/themetic's RESEARCH.md for why the model/deterministic
+ * split exists and what each gate check catches.
  */
 import type { AgentToolResult, ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { generateDarkTheme, runGate, writeTheme, type GateResult, type SeedHue } from "@danypops/themetic";
 import { Type } from "typebox";
-import { generateDarkTheme, type SeedHue } from "./lib/generate.ts";
-import { runGate, type GateResult } from "./lib/gate.ts";
-import { serializeTheme, writeTheme } from "./lib/write-theme.ts";
 
 interface ThemeToolDetails {
 	gate?: GateResult;
@@ -70,7 +68,7 @@ export default function themetic(pi: ExtensionAPI) {
 				content: [
 					{
 						type: "text",
-						text: `Theme "${params.name}" passed the quality gate and was written to ${path}. Tell the user to select it via /settings or "theme": "${params.name}" in settings.json, and that pi-profiles' \`theme\` field can also reference it by name.`,
+						text: `Theme "${params.name}" passed the quality gate and was written to ${path}. Tell the user to select it via /settings or "theme": "${params.name}" in settings.json.`,
 					},
 				],
 				details: { path, colors: theme.colors, vars: theme.vars },
@@ -78,6 +76,3 @@ export default function themetic(pi: ExtensionAPI) {
 		},
 	});
 }
-
-// Re-exported for the walking-skeleton CLI and tests; not part of the extension's runtime surface.
-export { generateDarkTheme, runGate, serializeTheme };

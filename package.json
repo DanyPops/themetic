@@ -1,41 +1,24 @@
 {
-	"name": "@danypops/themetic",
-	"version": "0.1.2",
-	"pi": {
-		"extensions": ["./index.ts"],
-		"skills": ["./skills"]
-	},
-	"description": "Generates pi color themes from a natural-language prompt via /skill:themetic. Seed hues come from the model; palette generation and a WCAG contrast/color-harmony gate are deterministic, so a theme is only written if it passes.",
+	"name": "themetic-workspace",
+	"private": true,
 	"type": "module",
-	"main": "index.ts",
-	"license": "MIT",
-	"author": "danypops <danypops@protonmail.com>",
+	"workspaces": ["packages/*"],
+	"keywords": ["pi-package"],
+	"scripts": {
+		"check": "npm run check --workspaces",
+		"test": "npm run test --workspaces --if-present"
+	},
+	"pi": {
+		"extensions": ["packages/pi-themetic/extension/src/index.ts"],
+		"skills": ["packages/pi-themetic/skills"]
+	},
+	"peerDependencies": {
+		"@earendil-works/pi-coding-agent": "*",
+		"@earendil-works/pi-tui": "*",
+		"typebox": "*"
+	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/DanyPops/themetic.git"
-	},
-	"homepage": "https://github.com/DanyPops/themetic#readme",
-	"bugs": {
-		"url": "https://github.com/DanyPops/themetic/issues"
-	},
-	"publishConfig": {
-		"access": "public"
-	},
-	"keywords": ["pi-package", "pi-extension", "pi-skill", "theme", "color-theory"],
-	"peerDependencies": {
-		"@earendil-works/pi-ai": ">=0.80.0",
-		"@earendil-works/pi-coding-agent": ">=0.80.0",
-		"@earendil-works/pi-tui": ">=0.80.0"
-	},
-	"dependencies": {
-		"culori": "^4.0.1"
-	},
-	"devDependencies": {
-		"typescript": "^5.7.0",
-		"@types/culori": "^4.0.1"
-	},
-	"scripts": {
-		"check": "tsc --noEmit",
-		"test": "node --experimental-strip-types --test test/*.test.ts"
 	}
 }

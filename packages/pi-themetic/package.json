@@ -1,0 +1,46 @@
+{
+	"name": "@danypops/pi-themetic",
+	"version": "0.1.0",
+	"description": "Pi extension: generates pi color themes from a natural-language prompt via /skill:themetic. The model picks seed hues; @danypops/themetic's deterministic palette generator and WCAG contrast/color-harmony gate decide whether a theme is actually written.",
+	"type": "module",
+	"main": "./extension/src/index.ts",
+	"license": "MIT",
+	"author": "danypops <danypops@protonmail.com>",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/DanyPops/themetic.git",
+		"directory": "packages/pi-themetic"
+	},
+	"homepage": "https://github.com/DanyPops/themetic#readme",
+	"bugs": {
+		"url": "https://github.com/DanyPops/themetic/issues"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"files": [
+		"extension",
+		"skills",
+		"README.md"
+	],
+	"pi": {
+		"extensions": ["./extension/src/index.ts"],
+		"skills": ["./skills"]
+	},
+	"keywords": ["pi-package", "pi-extension", "pi-skill", "theme", "color-theory"],
+	"dependencies": {
+		"@danypops/themetic": "^0.2.0"
+	},
+	"peerDependencies": {
+		"@earendil-works/pi-ai": ">=0.80.0",
+		"@earendil-works/pi-coding-agent": ">=0.80.0",
+		"@earendil-works/pi-tui": ">=0.80.0",
+		"typebox": "*"
+	},
+	"devDependencies": {
+		"typescript": "^5.7.0"
+	},
+	"scripts": {
+		"check": "tsc --noEmit"
+	}
+}

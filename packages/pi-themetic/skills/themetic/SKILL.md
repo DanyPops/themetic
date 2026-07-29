@@ -2,7 +2,7 @@
 name: themetic
 description: Generates a pi color theme from a natural-language prompt (a place, culture, material, mood). The palette passes a deterministic legibility gate before it's written. Use when asked to create, generate, or design a pi theme or color scheme, or when the user runs /themetic or /skill:themetic.
 metadata:
-  package: "@danypops/themetic"
+  package: "@danypops/pi-themetic"
 ---
 
 # Themetic
@@ -66,6 +66,5 @@ describing colors in prose instead of continuing to call the tool.
 ## 4. Report the result
 
 Once it succeeds, tell the user the theme name and that it's been written to
-`~/.pi/agent/themes/<name>.json`. Mention it can be selected via `/settings`,
-`"theme": "<name>"` in `settings.json`, or referenced from a `pi-profiles`
-profile's `theme` field.
+`~/.pi/agent/themes/<name>.json`. Mention it can be selected via `/settings`
+or `"theme": "<name>"` in `settings.json`.

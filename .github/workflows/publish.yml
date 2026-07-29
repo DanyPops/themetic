@@ -1,14 +1,12 @@
-name: Publish Package
+name: Publish Packages
 
-# Requires a Trusted Publisher configured for this package at
-# https://npmjs.com -> Packages -> @danypops/themetic -> Settings -> Trusted Publisher:
-#   Organization or user: DanyPops
-#   Repository: themetic
-#   Workflow filename: publish.yml   (must match this file's name exactly)
-#   Allowed actions: npm publish
-#
-# Once that's configured, pushing a `v*` tag publishes via OIDC - no npm
-# token, no interactive OTP. See docs.npmjs.com/trusted-publishers.
+# Trusted publishing (OIDC) for the @danypops scope. npm CLI (>= 11.5.1)
+# detects OIDC automatically. Configure one trusted publisher **per package**
+# on npmjs.com: org=DanyPops repo=themetic workflow=publish.yml -- this must
+# be done once for each of @danypops/themetic and @danypops/pi-themetic
+# individually before that package's first trusted-publish run will
+# succeed; a package with no trusted publisher configured yet will fail its
+# publish step with a 404/403, not silently skip.
 
 on:
   push:
@@ -16,7 +14,7 @@ on:
       - "v*"
 
 permissions:
-  id-token: write
+  id-token: write # Required for OIDC
   contents: read
 
 jobs:
@@ -25,12 +23,41 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      # NO registry-url: it writes an .npmrc with an empty NODE_AUTH_TOKEN
+      # line, shadowing OIDC and breaking trusted publishing with a 404.
       - uses: actions/setup-node@v6
         with:
           node-version: "22"
-          registry-url: "https://registry.npmjs.org"
+          package-manager-cache: false
+
+      # Trusted publishing needs npm >= 11.5.1; Node's bundled npm can be older.
+      - run: npm install -g npm@latest && npm --version
 
       - run: npm ci
       - run: npm run check
       - run: npm test
-      - run: npm publish --access public
+
+      # Dependency order: pi-themetic depends on themetic.
+      #
+      # Idempotent by design -- if a prior run of this same tag already
+      # published one package, re-running the workflow picks up cleanly
+      # instead of hard-failing on "cannot publish over previously
+      # published version" for the package(s) that already succeeded.
+      - run: |
+          version=$(node -p "require('./package.json').version")
+          name=$(node -p "require('./package.json').name")
+          if npm view "$name@$version" version >/dev/null 2>&1; then
+            echo "$name@$version already published, skipping"
+          else
+            npm publish --access public
+          fi
+        working-directory: packages/themetic
+      - run: |
+          version=$(node -p "require('./package.json').version")
+          name=$(node -p "require('./package.json').name")
+          if npm view "$name@$version" version >/dev/null 2>&1; then
+            echo "$name@$version already published, skipping"
+          else
+            npm publish --access public
+          fi
+        working-directory: packages/pi-themetic
