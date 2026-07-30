@@ -1,6 +1,6 @@
 # @danypops/pi-themetic
 
-Generates [pi](https://pi.dev) color themes from a natural-language prompt.
+Generates [pi](https://pi.dev) color themes from a natural-language prompt, and applies a themed working-indicator spinner.
 
 ```
 pi install npm:@danypops/pi-themetic
@@ -25,9 +25,14 @@ If the gate fails, nothing is written and the tool's error names the specific ch
 
 An earlier hand-picked theme in this project shipped a saturated red-on-green combination that nobody caught until a screenshot showed the colors visibly "vibrating" — contrast math alone hadn't flagged it. The gate exists so an LLM freely picking "pleasant" colors from a prompt can't reproduce that failure silently.
 
+## Spinner
+
+On session start, this extension sets the interactive working indicator (`ctx.ui.setWorkingIndicator`) to a named `SpinnerPreset` -- a sequence of glyphs, each colored by one of the *active theme's* own tokens (so it re-colors correctly across a theme switch, not baked in at definition time). The only preset today is `blossom` (▪●◆■▲■◆●), migrated from what used to be a loose, untracked personal extension file. This is the first piece of themetic's planned growth into a broader bespoke theme tuner -- RGB knobs, border styles, a greeter, a rasterizer, and more spinner presets, selectable rather than hardcoded.
+
 ## What's in here
 
-- `extension/src/index.ts` — registers the `themetic_generate` tool.
+- `extension/src/index.ts` — registers the `themetic_generate` tool and applies the spinner preset.
+- `extension/src/spinner.ts` — `SpinnerPreset`/`SpinnerFrame` types, the `blossom` preset, and theme-token resolution.
 - `skills/themetic/SKILL.md` — the research → seed → generate → gate → retry instructions, loaded via `/skill:themetic`.
 
 The actual color science (palette generation, the gate's checks, OKLCH math) lives in the separate [`@danypops/themetic`](https://www.npmjs.com/package/@danypops/themetic) library — see its README and `RESEARCH.md` for the papers behind each check.

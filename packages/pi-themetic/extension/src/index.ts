@@ -1,7 +1,8 @@
 /**
- * pi-themetic: generates pi color themes from a natural-language prompt.
+ * pi-themetic: generates pi color themes from a natural-language prompt, and
+ * applies a configurable working-indicator spinner.
  *
- * This extension registers exactly one thing: the `themetic_generate` tool,
+ * The theme-generation half registers exactly one tool, `themetic_generate`,
  * a thin wrapper around @danypops/themetic's deterministic backend (palette
  * generation, token-role assignment, and a pass/fail quality gate; none of
  * it model judgment). The agentic half, researching a prompt's subject,
@@ -14,10 +15,18 @@
  *
  * See @danypops/themetic's RESEARCH.md for why the model/deterministic
  * split exists and what each gate check catches.
+ *
+ * The spinner half applies a named SpinnerPreset (see spinner.ts) as the
+ * interactive working indicator on session_start, restoring Pi's default on
+ * session_shutdown -- migrated from a loose, untracked personal extension
+ * file into a real, versioned feature; the first piece of themetic's planned
+ * growth into a broader bespoke theme tuner (RGB knobs, borders, greeter,
+ * rasterizer).
  */
-import type { AgentToolResult, ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import type { AgentToolResult, ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { generateDarkTheme, runGate, writeTheme, type GateResult, type SeedHue } from "@danypops/themetic";
 import { Type } from "typebox";
+import { DEFAULT_SPINNER_PRESET, resolveSpinnerFrames, type SpinnerPreset } from "./spinner.js";
 
 interface ThemeToolDetails {
 	gate?: GateResult;
@@ -34,7 +43,21 @@ const SeedHueSchema = Type.Object({
 	}),
 });
 
+function applySpinnerPreset(ctx: ExtensionContext, preset: SpinnerPreset): void {
+	ctx.ui.setWorkingIndicator({
+		frames: resolveSpinnerFrames(preset, ctx.ui.theme),
+		intervalMs: preset.intervalMs,
+	});
+}
+
 export default function themetic(pi: ExtensionAPI) {
+	pi.on("session_start", (_event, ctx) => {
+		applySpinnerPreset(ctx, DEFAULT_SPINNER_PRESET);
+	});
+	pi.on("session_shutdown", (_event, ctx) => {
+		ctx.ui.setWorkingIndicator();
+	});
+
 	pi.registerTool({
 		name: "themetic_generate",
 		label: "Generate theme",

@@ -41,6 +41,7 @@
 		"typescript": "^5.7.0"
 	},
 	"scripts": {
-		"check": "tsc --noEmit"
+		"check": "tsc --noEmit",
+		"test": "node --experimental-strip-types --test extension/test/*.test.ts"
 	}
 }
