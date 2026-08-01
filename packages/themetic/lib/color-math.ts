@@ -8,8 +8,9 @@
  * math. See docs/agentic-pi-theme-maker research doc for the incident
  * history this module is meant to prevent from recurring.
  */
-import { converter, formatHex, parse, wcagContrast, wcagLuminance } from "culori";
+
 import type { Oklch } from "culori";
+import { converter, formatHex, parse, wcagContrast, wcagLuminance } from "culori";
 
 const toOklch = converter("oklch");
 const toHsl = converter("hsl");

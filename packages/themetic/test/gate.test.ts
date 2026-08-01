@@ -113,7 +113,6 @@ test("gate rejects insufficient contrast between co-visible tool title and its b
 
 test("gate rejects a missing required schema token", () => {
 	const theme = baseTheme();
-	// biome-ignore lint: deliberately deleting a required key to test the schema check
 	delete (theme.colors as Record<string, string>).syntaxOperator;
 	const result = runGate(theme);
 	assert.equal(result.pass, false);

@@ -11,8 +11,8 @@
  * Usage: node --experimental-strip-types scripts/generate-cli.ts <spec.json>
  */
 import { readFileSync } from "node:fs";
-import { generateDarkTheme, type ThemeSpec } from "../lib/generate.ts";
 import { runGate } from "../lib/gate.ts";
+import { generateDarkTheme, type ThemeSpec } from "../lib/generate.ts";
 import { serializeTheme, writeTheme } from "../lib/write-theme.ts";
 
 const specPath = process.argv[2];

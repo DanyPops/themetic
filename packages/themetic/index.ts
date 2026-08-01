@@ -11,15 +11,13 @@
  *
  * See RESEARCH.md for the papers behind each gate check.
  */
-export { generateDarkTheme, type GeneratedTheme, type SeedHue, type ThemeSpec } from "./lib/generate.ts";
-export { assertGatePasses, runGate, type GateFailure, type GateResult } from "./lib/gate.ts";
-export { serializeTheme, themesDir, writeTheme } from "./lib/write-theme.ts";
-export { OPTIONAL_THEME_COLOR_KEYS, REQUIRED_THEME_COLOR_KEYS } from "./lib/theme-schema.ts";
+
 export {
 	CONTRAST_MARGIN,
 	contrastRatio,
 	desaturate,
 	ensureContrast,
+	type HslColor,
 	hexToHsl,
 	hexToOklch,
 	hsl,
@@ -28,5 +26,8 @@ export {
 	isVibrating,
 	oklchToHex,
 	relativeLuminance,
-	type HslColor,
 } from "./lib/color-math.ts";
+export { assertGatePasses, type GateFailure, type GateResult, runGate } from "./lib/gate.ts";
+export { type GeneratedTheme, generateDarkTheme, type SeedHue, type ThemeSpec } from "./lib/generate.ts";
+export { OPTIONAL_THEME_COLOR_KEYS, REQUIRED_THEME_COLOR_KEYS } from "./lib/theme-schema.ts";
+export { serializeTheme, themesDir, writeTheme } from "./lib/write-theme.ts";

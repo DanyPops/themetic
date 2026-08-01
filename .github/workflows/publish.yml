@@ -34,6 +34,7 @@ jobs:
       - run: npm install -g npm@latest && npm --version
 
       - run: npm ci
+      - run: npm run lint:ci
       - run: npm run check
       - run: npm test
 

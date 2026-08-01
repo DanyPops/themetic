@@ -1,0 +1,25 @@
+name: CI
+
+# Runs on every push/PR -- themetic previously had no pre-merge CI at all,
+# only publish.yml's tag-triggered check+test. Mirrors publish.yml's own
+# npm-based install: npm and bun resolve this repo's node_modules shape
+# differently enough that a bun install here breaks tsc's @types/node
+# resolution (confirmed live).
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+      - run: npm ci
+      - run: npm run lint:ci
+      - run: npm run check
+      - run: npm run test

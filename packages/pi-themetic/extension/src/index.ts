@@ -23,8 +23,9 @@
  * growth into a broader bespoke theme tuner (RGB knobs, borders, greeter,
  * rasterizer).
  */
+
+import { type GateResult, generateDarkTheme, runGate, type SeedHue, writeTheme } from "@danypops/themetic";
 import type { AgentToolResult, ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
-import { generateDarkTheme, runGate, writeTheme, type GateResult, type SeedHue } from "@danypops/themetic";
 import { Type } from "typebox";
 import { DEFAULT_SPINNER_PRESET, resolveSpinnerFrames, type SpinnerPreset } from "./spinner.js";
 
@@ -76,7 +77,9 @@ export default function themetic(pi: ExtensionAPI) {
 		async execute(_toolCallId, params): Promise<AgentToolResult<ThemeToolDetails>> {
 			const seeds = params.seeds as SeedHue[];
 			if (!seeds.some((s) => s.role === "brand")) {
-				throw new Error('Exactly one seed must have role "brand". Mark the single most saturated/central hue as brand and the rest as secondary.');
+				throw new Error(
+					'Exactly one seed must have role "brand". Mark the single most saturated/central hue as brand and the rest as secondary.',
+				);
 			}
 			const theme = generateDarkTheme({ name: params.name, seeds });
 			const gate = runGate(theme);

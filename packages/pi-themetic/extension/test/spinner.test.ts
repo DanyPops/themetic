@@ -1,11 +1,14 @@
-import { describe, it } from "node:test";
 import assert from "node:assert/strict";
+import { describe, it } from "node:test";
+import type { Theme } from "@earendil-works/pi-coding-agent";
 import { BLOSSOM_PRESET, DEFAULT_SPINNER_PRESET, resolveSpinnerFrames, SPINNER_PRESETS } from "../src/spinner.ts";
 
+// Theme is a class with private fields; a plain fake can't satisfy it structurally.
+// Cast through unknown -- resolveSpinnerFrames only ever calls fg().
 function fakeTheme() {
 	return {
 		fg: (token: string, glyph: string) => `<${token}>${glyph}`,
-	} as any;
+	} as unknown as Theme;
 }
 
 describe("BLOSSOM_PRESET", () => {
@@ -31,21 +34,12 @@ describe("BLOSSOM_PRESET", () => {
 describe("resolveSpinnerFrames", () => {
 	it("colors each glyph with its own frame's theme token, preserving frame order", () => {
 		const frames = resolveSpinnerFrames(BLOSSOM_PRESET, fakeTheme());
-		assert.deepEqual(frames, [
-			"<dim>▪",
-			"<border>●",
-			"<success>◆",
-			"<accent>■",
-			"<warning>▲",
-			"<accent>■",
-			"<success>◆",
-			"<border>●",
-		]);
+		assert.deepEqual(frames, ["<dim>▪", "<border>●", "<success>◆", "<accent>■", "<warning>▲", "<accent>■", "<success>◆", "<border>●"]);
 	});
 
 	it("re-resolves against whichever theme is passed, not a cached one", () => {
-		const themeA = { fg: () => "A" } as any;
-		const themeB = { fg: () => "B" } as any;
+		const themeA = { fg: () => "A" } as unknown as Theme;
+		const themeB = { fg: () => "B" } as unknown as Theme;
 		assert.deepEqual(resolveSpinnerFrames(BLOSSOM_PRESET, themeA), Array(8).fill("A"));
 		assert.deepEqual(resolveSpinnerFrames(BLOSSOM_PRESET, themeB), Array(8).fill("B"));
 	});

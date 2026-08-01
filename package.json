@@ -1,24 +1,38 @@
 {
-	"name": "themetic-workspace",
-	"private": true,
-	"type": "module",
-	"workspaces": ["packages/*"],
-	"keywords": ["pi-package"],
-	"scripts": {
-		"check": "npm run check --workspaces",
-		"test": "npm run test --workspaces --if-present"
-	},
-	"pi": {
-		"extensions": ["packages/pi-themetic/extension/src/index.ts"],
-		"skills": ["packages/pi-themetic/skills"]
-	},
-	"peerDependencies": {
-		"@earendil-works/pi-coding-agent": "*",
-		"@earendil-works/pi-tui": "*",
-		"typebox": "*"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/DanyPops/themetic.git"
-	}
+  "name": "themetic-workspace",
+  "private": true,
+  "type": "module",
+  "workspaces": ["packages/*"],
+  "keywords": ["pi-package"],
+  "scripts": {
+    "check": "npm run check --workspaces",
+    "test": "npm run test --workspaces --if-present",
+    "format": "biome format --write .",
+    "lint": "biome check --write . && eslint packages --max-warnings 0",
+    "lint:ci": "biome ci . && eslint packages --max-warnings 0"
+  },
+  "pi": {
+    "extensions": ["packages/pi-themetic/extension/src/index.ts"],
+    "skills": ["packages/pi-themetic/skills"]
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "@earendil-works/pi-tui": "*",
+    "typebox": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DanyPops/themetic.git"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.6",
+    "eslint": "^10.8.0",
+    "eslint-import-resolver-typescript": "^4.4.5",
+    "eslint-plugin-import-x": "^4.17.1",
+    "jiti": "^2.7.0",
+    "typescript-eslint": "^8.65.0"
+  },
+  "trustedDependencies": [
+    "unrs-resolver"
+  ]
 }

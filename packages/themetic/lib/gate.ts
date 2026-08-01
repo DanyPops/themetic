@@ -132,7 +132,10 @@ export function runGate(theme: GeneratedTheme): GateResult {
 		const fg = resolve(theme, fgKey);
 		const bg = resolve(theme, bgKey);
 		if (isVibrating(fg, bg)) {
-			failures.push({ check: "vibration", detail: `${fgKey} (${fg}) vibrates against ${bgKey} (${bg}): near-complementary hues, both highly saturated` });
+			failures.push({
+				check: "vibration",
+				detail: `${fgKey} (${fg}) vibrates against ${bgKey} (${bg}): near-complementary hues, both highly saturated`,
+			});
 		}
 	}
 
