@@ -75,5 +75,5 @@ export const REQUIRED_THEME_COLOR_KEYS = [
 	"bashMode",
 ] as const;
 
-/** Optional per docs/themes.md: falls back to thinkingXhigh when omitted. */
-export const OPTIONAL_THEME_COLOR_KEYS = ["thinkingMax"] as const;
+/** Accept legacy themes while generating the scrollbar tokens required by current Pi. */
+export const OPTIONAL_THEME_COLOR_KEYS = ["thinkingMax", "scrollbarTrack", "scrollbarThumb"] as const;

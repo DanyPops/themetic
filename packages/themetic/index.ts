@@ -29,5 +29,7 @@ export {
 } from "./lib/color-math.ts";
 export { assertGatePasses, type GateFailure, type GateResult, runGate } from "./lib/gate.ts";
 export { type GeneratedTheme, generateDarkTheme, type SeedHue, type ThemeSpec } from "./lib/generate.ts";
+export { type PreparationResult, prepareTheme } from "./lib/prepare.ts";
 export { OPTIONAL_THEME_COLOR_KEYS, REQUIRED_THEME_COLOR_KEYS } from "./lib/theme-schema.ts";
+export { backgroundSamples, DEFAULT_VIEWING, type ViewingConditions } from "./lib/viewing.ts";
 export { serializeTheme, themesDir, writeTheme } from "./lib/write-theme.ts";

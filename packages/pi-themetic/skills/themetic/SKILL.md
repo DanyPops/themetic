@@ -37,8 +37,8 @@ but only when grounded in something specific enough to have an actual hue.
 ## 2. Pick 1-3 seed hues
 
 Convert your research into 1-3 hues (0-360 degrees on the color wheel).
-Mark exactly one as `"brand"`, the single most central/saturated hue,
-reserved for the theme's sparse accent color. Mark the rest `"secondary"`.
+Mark exactly one as `"brand"`, the central hue used for accents and emphasis.
+Mark the rest `"secondary"`.
 
 Do not pick more than 3. Do not try to encode every color mentioned in the
 prompt as a separate seed. For example, "deep browns, reds, oranges, blue
@@ -49,7 +49,21 @@ words.
 
 ## 3. Call `themetic_generate`
 
-Call the tool with a kebab-case `name` and your seed hues. Name it after the
+Call the tool with a kebab-case `name` and your seed hues. The default
+`profile: "vibrant"` colors structural roles and brightens secondary text;
+use `"subdued"` only for an explicitly restrained, gray-heavy appearance.
+
+For transparent terminals, supply `viewing` using verified configuration:
+`terminalBackground` (six-digit hex), `opacity` (0–1), `backdropSamples`
+(1–8 six-digit hex colors), and `transparentSurfaces` (whether opacity also
+affects explicit panel backgrounds). Black/white backdrop samples provide a
+conservative range when the wallpaper is unknown. Omission assumes opaque
+`#252525`; it does not detect the desktop. These are encoded-sRGB estimates
+with opaque glyphs, not a guarantee about compositor gamma or blur. Report
+the assumptions and ask for visual confirmation. An impossible background
+range may require increasing terminal opacity rather than changing hues.
+
+Name it after the
 prompt's subject only (for example `armenian-mountains`, `cozy-autumn-forest`);
 do not prefix it with `themetic` or this skill's own name, since that's not
 a namespace the theme file needs. It runs the

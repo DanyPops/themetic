@@ -1,39 +1,62 @@
-/**
- * Walking-skeleton CLI: takes a ThemeSpec JSON file, runs the deterministic
- * pipeline, gates it, and writes ~/.pi/agent/themes/<name>.json on success.
- *
- * This stands in for the agentic half (skills/themetic/SKILL.md, invoked via
- * `/skill:themetic <prompt>`) for direct testing of the deterministic
- * pipeline without a model in the loop — the seed hues this CLI takes as
- * input are exactly what the skill asks the model to produce; everything
- * downstream of that is deterministic either way.
- *
- * Usage: node --experimental-strip-types scripts/generate-cli.ts <spec.json>
- */
-import { readFileSync } from "node:fs";
-import { runGate } from "../lib/gate.ts";
-import { generateDarkTheme, type ThemeSpec } from "../lib/generate.ts";
-import { serializeTheme, writeTheme } from "../lib/write-theme.ts";
+/** Generate a gated Pi theme from a bounded JSON specification. */
+import { closeSync, openSync, readSync } from "node:fs";
+import { type PreparationResult, prepareTheme } from "../lib/prepare.ts";
+import { writeTheme } from "../lib/write-theme.ts";
 
-const specPath = process.argv[2];
-if (!specPath) {
-	console.error("Usage: generate-cli.ts <spec.json>");
-	process.exit(1);
+const args = process.argv.slice(2);
+const json = args.includes("--json");
+const dryRun = args.includes("--dry-run");
+const usage =
+	"Usage: generate-cli.ts <spec.json> [--dry-run] [--json]\nSpec: name, seeds, profile (vibrant default | subdued), optional viewing {terminalBackground, opacity, backdropSamples (1–8 hex colors), transparentSurfaces}. Maximum spec size: 16 KiB. Viewing uses encoded-sRGB background estimates and opaque glyphs; actual compositor behavior may differ.";
+if (args.includes("--help")) {
+	console.log(usage);
+	process.exit(0);
 }
-
-const spec = JSON.parse(readFileSync(specPath, "utf-8")) as ThemeSpec;
-const theme = generateDarkTheme(spec);
-const gateResult = runGate(theme);
-
-if (!gateResult.pass) {
-	console.error(`Theme "${theme.name}" failed the quality gate:`);
-	for (const failure of gateResult.failures) {
-		console.error(`  [${failure.check}] ${failure.detail}`);
+const paths = args.filter((arg) => !arg.startsWith("--"));
+let result: PreparationResult;
+if (paths.length !== 1 || args.some((arg) => arg.startsWith("--") && arg !== "--json" && arg !== "--dry-run")) {
+	result = { status: "invalid", error: usage };
+} else {
+	try {
+		const fd = openSync(paths[0], "r");
+		try {
+			const buffer = Buffer.alloc(16385);
+			let length = 0;
+			while (length < buffer.length) {
+				const count = readSync(fd, buffer, length, buffer.length - length, null);
+				if (!count) break;
+				length += count;
+			}
+			result =
+				length > 16384
+					? { status: "invalid", error: "Spec exceeds 16 KiB." }
+					: prepareTheme(JSON.parse(buffer.toString("utf8", 0, length)));
+		} finally {
+			closeSync(fd);
+		}
+	} catch {
+		result = { status: "invalid", error: "Could not read a valid JSON specification." };
 	}
-	console.error("\nGenerated (but not written) theme:");
-	console.error(serializeTheme(theme));
-	process.exit(1);
 }
 
-const path = writeTheme(theme);
-console.log(`Theme "${theme.name}" passed the quality gate and was written to ${path}`);
+switch (result.status) {
+	case "invalid":
+	case "rejected":
+		if (json) console.log(JSON.stringify(result));
+		else console.error(result.status === "invalid" ? result.error : result.gate.failures.map((f) => `[${f.check}] ${f.detail}`).join("\n"));
+		process.exitCode = 1;
+		break;
+	case "ready": {
+		const path = dryRun ? undefined : writeTheme(result.theme);
+		if (json) console.log(JSON.stringify({ ...result, ...(path ? { path } : {}) }));
+		else
+			console.log(
+				`Theme "${result.theme.name}" passed the gate for ${result.theme.viewing ? "the supplied/default viewing estimates" : "opaque panel backgrounds"}.${path ? ` Written to ${path}` : " Dry run; nothing written."}`,
+			);
+		break;
+	}
+	default: {
+		const exhaustive: never = result;
+		throw new Error(`Unexpected preparation result: ${exhaustive}`);
+	}
+}

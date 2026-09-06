@@ -8,7 +8,8 @@
  */
 import { CONTRAST_MARGIN, contrastRatio, isMudZone, isVibrating } from "./color-math.ts";
 import type { GeneratedTheme } from "./generate.ts";
-import { REQUIRED_THEME_COLOR_KEYS } from "./theme-schema.ts";
+import { OPTIONAL_THEME_COLOR_KEYS, REQUIRED_THEME_COLOR_KEYS } from "./theme-schema.ts";
+import { backgroundSamples, foregroundFloor, isHex, isViewingConditions, SURFACE_KEYS } from "./viewing.ts";
 
 export interface GateFailure {
 	check: "schema" | "contrast" | "mud-zone" | "vibration";
@@ -92,7 +93,7 @@ export function runGate(theme: GeneratedTheme): GateResult {
 		if (!present.has(key)) failures.push({ check: "schema", detail: `missing required token "${key}"` });
 	}
 	for (const key of present) {
-		if (!required.includes(key) && key !== "thinkingMax") {
+		if (!required.includes(key) && !OPTIONAL_THEME_COLOR_KEYS.some((optional) => optional === key)) {
 			failures.push({ check: "schema", detail: `unexpected token "${key}" not in theme schema` });
 		}
 	}
@@ -100,6 +101,32 @@ export function runGate(theme: GeneratedTheme): GateResult {
 		const value = theme.colors[key];
 		if (value && !value.startsWith("#") && !(value in theme.vars)) {
 			failures.push({ check: "schema", detail: `unresolved var reference "${value}" for token "${key}"` });
+		}
+	}
+
+	for (const key of present) {
+		const value = theme.colors[key];
+		if (!isHex(value) && !isHex(theme.vars[value])) {
+			failures.push({ check: "schema", detail: `invalid hex color for token "${key}"` });
+		}
+	}
+	if (theme.viewing !== undefined && !isViewingConditions(theme.viewing)) {
+		failures.push({ check: "schema", detail: "invalid viewing conditions" });
+	}
+	if (failures.length) return { pass: false, failures };
+
+	const viewing = theme.viewing;
+	if (viewing) {
+		// Conservative coverage: text can move between terminal, selection, and tool panels.
+		const backgrounds = [
+			...new Set([...backgroundSamples(viewing), ...SURFACE_KEYS.flatMap((key) => backgroundSamples(viewing, resolve(theme, key)))]),
+		];
+		for (const key of present) {
+			if (SURFACE_KEYS.some((surface) => surface === key)) continue;
+			const minimum = Math.min(...backgrounds.map((bg) => contrastRatio(resolve(theme, key), bg)));
+			const floor = foregroundFloor(key);
+			if (minimum < floor)
+				failures.push({ check: "contrast", detail: `${key} across viewing backgrounds: ${minimum.toFixed(2)}:1, needs >= ${floor}:1` });
 		}
 	}
 

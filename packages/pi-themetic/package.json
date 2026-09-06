@@ -1,6 +1,6 @@
 {
 	"name": "@danypops/pi-themetic",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"description": "Pi extension: generates pi color themes from a natural-language prompt via /skill:themetic. The model picks seed hues; @danypops/themetic's deterministic palette generator and WCAG contrast/color-harmony gate decide whether a theme is actually written.",
 	"type": "module",
 	"main": "./extension/src/index.ts",
@@ -29,7 +29,7 @@
 	},
 	"keywords": ["pi-package", "pi-extension", "pi-skill", "theme", "color-theory"],
 	"dependencies": {
-		"@danypops/themetic": "^0.2.0"
+		"@danypops/themetic": "^0.3.0"
 	},
 	"peerDependencies": {
 		"@earendil-works/pi-ai": ">=0.80.0",

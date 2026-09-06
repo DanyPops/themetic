@@ -7,6 +7,8 @@
  * with no model calls; see RESEARCH.md for why that split exists.
  */
 import { CONTRAST_MARGIN, ensureContrast, hexToHsl, hsl, isMudZone, relativeLuminance } from "./color-math.ts";
+import { applyVibrantProfile } from "./vibrant.ts";
+import { DEFAULT_VIEWING, type ViewingConditions } from "./viewing.ts";
 
 export interface SeedHue {
 	/** Hue angle in degrees, 0-360. */
@@ -20,6 +22,9 @@ export interface SeedHue {
 export interface ThemeSpec {
 	name: string;
 	seeds: SeedHue[];
+	/** Defaults to vibrant; subdued retains the restrained gray role mapping. */
+	profile?: "vibrant" | "subdued";
+	viewing?: ViewingConditions;
 }
 
 // Canonical semantic hue anchors — fixed regardless of the prompt's seed hues.
@@ -50,6 +55,8 @@ function mutedFromSeed(seedHue: number, lightness: number, saturation = 0.45): s
 }
 
 export interface GeneratedTheme {
+	/** Generation/gate context, omitted from Pi's serialized theme format. */
+	viewing?: ViewingConditions;
 	name: string;
 	vars: Record<string, string>;
 	colors: Record<string, string>;
@@ -157,6 +164,8 @@ export function generateDarkTheme(spec: ThemeSpec): GeneratedTheme {
 		dim: "gray50",
 		text: "text",
 		thinkingText: "gray45",
+		scrollbarTrack: "gray70",
+		scrollbarThumb: "gray45",
 
 		selectedBg: "selectedBg",
 		userMessageBg: "userMessageBg",
@@ -216,7 +225,7 @@ export function generateDarkTheme(spec: ThemeSpec): GeneratedTheme {
 		customMessageLabel,
 	};
 
-	return {
+	const theme: GeneratedTheme = {
 		name: spec.name,
 		vars: fullVars,
 		colors,
@@ -226,4 +235,12 @@ export function generateDarkTheme(spec: ThemeSpec): GeneratedTheme {
 			infoBg: toolErrorBg,
 		},
 	};
+	if ((spec.profile ?? "vibrant") === "vibrant") {
+		const viewing = spec.viewing ?? DEFAULT_VIEWING;
+		theme.viewing = { ...viewing, backdropSamples: [...viewing.backdropSamples] };
+		applyVibrantProfile(theme, brand.hue, secondaryHues, theme.viewing);
+	} else if (spec.viewing) {
+		theme.viewing = { ...spec.viewing, backdropSamples: [...spec.viewing.backdropSamples] };
+	}
+	return theme;
 }

@@ -1,6 +1,6 @@
 {
 	"name": "@danypops/themetic",
-	"version": "0.2.0",
+	"version": "0.3.0",
 	"description": "Deterministic pi color-theme generation: palette generation, token-role assignment, and a WCAG contrast/color-harmony quality gate. No model, no Pi dependency — pure functions over a caller-supplied seed-hue list. The Pi extension and skill live in @danypops/pi-themetic.",
 	"type": "module",
 	"main": "./index.ts",
@@ -24,13 +24,19 @@
 		"lib",
 		"RESEARCH.md"
 	],
-	"keywords": ["color-theory", "theme", "wcag", "oklch"],
+	"keywords": [
+		"color-theory",
+		"theme",
+		"wcag",
+		"oklch"
+	],
 	"dependencies": {
 		"culori": "^4.0.1"
 	},
 	"devDependencies": {
-		"typescript": "^5.7.0",
-		"@types/culori": "^4.0.1"
+		"@types/culori": "^4.0.1",
+		"@types/node": "^22.20.1",
+		"typescript": "^5.7.0"
 	},
 	"scripts": {
 		"check": "tsc --noEmit",
